@@ -42,5 +42,33 @@ namespace WebApplication.Controllers
             var result = await _scoreServices.GetBetterTenStudens(teacherId);
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("generate-test-data")]
+        public async Task<ActionResult> GenerateDataTest()
+        {
+            if (AppConfiguration.GenerateTestData)
+            {
+                return BadRequest("Los datos de prueba ya se generaron");
+            }
+            await _scoreServices.GenerateDataTest();
+            AppConfiguration.GenerateTestData = true;
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("clean-all-data")]
+        public async Task<ActionResult> CleanAllData()
+        {
+            if (AppConfiguration.CleanTestData)
+            {
+                return BadRequest("Los datos de prueba ya se limpiaron");
+            }
+            await _scoreServices.CleanAllData();
+            AppConfiguration.CleanTestData = true;
+
+            return Ok();
+        }
     }
 }

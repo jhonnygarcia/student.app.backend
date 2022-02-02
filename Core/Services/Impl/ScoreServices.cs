@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Core.DbModel.Contexts;
@@ -334,6 +335,949 @@ namespace Core.Services.Impl
             };
 
             return result;
+        }
+
+        public async Task GenerateDataTest()
+        {
+            var student1 = new Student
+            {
+                Name = "Alberto",
+                LastName = "Gomez"
+            };
+            var student2 = new Student
+            {
+                Name = "Lila",
+                LastName = "Espinoza"
+            };
+            var student3 = new Student
+            {
+                Name = "Daniel",
+                LastName = "Lopez"
+            };
+            var student4 = new Student
+            {
+                Name = "Marco",
+                LastName = "Mendez"
+            };
+            var student5 = new Student
+            {
+                Name = "Yanis",
+                LastName = "Frometa"
+            };
+            var student6 = new Student
+            {
+                Name = "Erick",
+                LastName = "Bauer"
+            };
+            var student7 = new Student
+            {
+                Name = "Rene",
+                LastName = "Morales"
+            };
+            var student8 = new Student
+            {
+                Name = "Buby",
+                LastName = "Davalos"
+            };
+            var student9 = new Student
+            {
+                Name = "Luis",
+                LastName = "Vega"
+            };
+            var student10 = new Student
+            {
+                Name = "Cristian",
+                LastName = "Flores"
+            };
+            var student11 = new Student
+            {
+                Name = "Milenka",
+                LastName = "Flores"
+            };
+            var student12 = new Student
+            {
+                Name = "Pamela",
+                LastName = "Flores"
+            };
+            var student13 = new Student
+            {
+                Name = "Victor",
+                LastName = "Lopez"
+            };
+            var student14 = new Student
+            {
+                Name = "Jorge",
+                LastName = "Vasquez"
+            };
+
+            _context.Students.AddRange(student1, student2, student3, student4,
+                student5, student6, student7, student8, student9, student10,
+                student11, student12, student13, student14);
+            await _context.SaveChangesAsync();
+
+            var teacher1 = new Teacher
+            {
+                Name = "Maria",
+                LastName = "Gomez"
+            };
+            var teacher2 = new Teacher
+            {
+                Name = "Fernando",
+                LastName = "Espinoza"
+            };
+            var teacher3 = new Teacher
+            {
+                Name = "Nadia",
+                LastName = "Parada"
+            };
+
+            _context.Teachers.AddRange(teacher1, teacher2, teacher3);
+            await _context.SaveChangesAsync();
+
+            var subject1 = new Subject
+            {
+                Name = "Cálculo",
+                Description = "Cálculo 1",
+                Semester = "Primer Semestre",
+                Teacher = teacher1
+            };
+            var subject2 = new Subject
+            {
+                Name = "Cálculo",
+                Description = "Cálculo 2",
+                Semester = "Segundo Semestre",
+                Teacher = teacher1
+            };
+            var subject3 = new Subject
+            {
+                Name = "Cálculo",
+                Description = "Cálculo 3",
+                Semester = "Tercer Semestre",
+                Teacher = teacher1
+            };
+            var subject4 = new Subject
+            {
+                Name = "Programación",
+                Description = "Programación 1",
+                Semester = "Primer Semestre",
+                Teacher = teacher2
+            };
+            var subject5 = new Subject
+            {
+                Name = "Programación",
+                Description = "Programación 2",
+                Semester = "Segundo Semestre",
+                Teacher = teacher3
+            };
+            var subject6 = new Subject
+            {
+                Name = "Programación",
+                Description = "Programación 3",
+                Semester = "Tercer Semestre",
+                Teacher = teacher3
+            };
+            _context.Subjects.AddRange(subject1, subject2, subject3, subject4, subject5, subject6);
+            await _context.SaveChangesAsync();
+
+            var class1 = new Class
+            {
+                Name = "Clase 1",
+                Description = "Descripción clase 1",
+                Subject = subject1,
+                Students = new List<Student>
+                {
+                    student1, student2, student3, student4, student5,student6
+                }
+            };
+            var class2 = new Class
+            {
+                Name = "Clase 2",
+                Description = "Descripción clase 2",
+                Subject = subject2,
+                Students = new List<Student>
+                {
+                    student4, student5,student6, student7, student8, student9, student10
+                }
+            };
+            var class3 = new Class
+            {
+                Name = "Clase 3",
+                Description = "Descripción clase 3",
+                Subject = subject3,
+                Students = new List<Student>
+                {
+                    student1, student2, student3, student4, student5, student6, student7, 
+                    student8, student9, student10
+                }
+            };
+            _context.Classes.AddRange(class1, class2, class3);
+            await _context.SaveChangesAsync();
+
+            var scores1 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 80,
+                    Student = student1,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 50,
+                    Student = student1,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 60,
+                    Student = student1,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 70,
+                    Student = student1,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+            };
+
+            var scores2 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 50,
+                    Student = student2,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 50,
+                    Student = student2,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 60,
+                    Student = student2,
+                    Teacher = teacher1,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 70,
+                    Student = student2,
+                    Teacher = teacher1,
+                    Subject = subject1
+                }
+            };
+
+            var scores3 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 50,
+                    Student = student3,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 50,
+                    Student = student3,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 60,
+                    Student = student3,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 30,
+                    Student = student3,
+                    Teacher = teacher2,
+                    Subject = subject1
+                }
+            };
+
+            var scores4 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 50,
+                    Student = student4,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 40,
+                    Student = student4,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 33.5,
+                    Student = student4,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 30,
+                    Student = student4,
+                    Teacher = teacher2,
+                    Subject = subject1
+                }
+            };
+
+            var scores5 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 50,
+                    Student = student5,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 40,
+                    Student = student5,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 33.5,
+                    Student = student5,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 30,
+                    Student = student5,
+                    Teacher = teacher2,
+                    Subject = subject1
+                }
+            };
+
+            var scores6 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 50,
+                    Student = student6,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 40,
+                    Student = student6,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 33.5,
+                    Student = student6,
+                    Teacher = teacher2,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 30,
+                    Student = student6,
+                    Teacher = teacher2,
+                    Subject = subject1
+                }
+            };
+
+            var scores7 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 60,
+                    Student = student7,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student7,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 33.5,
+                    Student = student7,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 50,
+                    Student = student7,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores8 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 60,
+                    Student = student8,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student8,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 45.5,
+                    Student = student8,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 40,
+                    Student = student8,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores9 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 60,
+                    Student = student9,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 60,
+                    Student = student9,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 33.5,
+                    Student = student9,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 10,
+                    Student = student9,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores10 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 60,
+                    Student = student10,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student10,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 33.5,
+                    Student = student10,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 50,
+                    Student = student10,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores11 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 60,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject3
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 70,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject3
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 80,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject3
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 0,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject3
+                }
+            };
+
+            var scores12 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 100,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 10,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 20,
+                    Student = student11,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores13 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 10,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 40,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 35,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 30,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores14 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 100,
+                    Student = student14,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 100,
+                    Student = student14,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 90,
+                    Student = student14,
+                    Teacher = teacher3,
+                    Subject = subject1
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 80,
+                    Student = student14,
+                    Teacher = teacher3,
+                    Subject = subject1
+                }
+            };
+
+            var scores15 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 100,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject2
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 100,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject2
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 90,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject2
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 80,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject2
+                }
+            };
+
+            var scores16 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 100,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject4
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 100,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject4
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 90,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject4
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 80,
+                    Student = student13,
+                    Teacher = teacher3,
+                    Subject = subject4
+                }
+            };
+
+            var scores17 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 45,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject4
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject4
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 10,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject4
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 20,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject4
+                }
+            };
+
+            var scores18 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 45,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 10,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 20,
+                    Student = student1,
+                    Teacher = teacher3,
+                    Subject = subject5
+                }
+            };
+
+            var scores19 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 15,
+                    Student = student2,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student2,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 10,
+                    Student = student2,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 20,
+                    Student = student2,
+                    Teacher = teacher3,
+                    Subject = subject5
+                }
+            };
+
+            var scores20 = new[]
+            {
+                new Score
+                {
+                    Description = "Examen 1",
+                    Qualification = 40,
+                    Student = student3,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Examen 2",
+                    Qualification = 20,
+                    Student = student3,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Examen 3",
+                    Qualification = 50,
+                    Student = student3,
+                    Teacher = teacher3,
+                    Subject = subject5
+                },
+                new Score
+                {
+                    Description = "Practíco",
+                    Qualification = 80,
+                    Student = student3,
+                    Teacher = teacher3,
+                    Subject = subject5
+                }
+            };
+
+            _context.Scores.AddRange(scores1);
+            _context.Scores.AddRange(scores2);
+            _context.Scores.AddRange(scores3);
+            _context.Scores.AddRange(scores4);
+            _context.Scores.AddRange(scores5);
+            _context.Scores.AddRange(scores6);
+            _context.Scores.AddRange(scores7);
+            _context.Scores.AddRange(scores8);
+            _context.Scores.AddRange(scores9);
+            _context.Scores.AddRange(scores10);
+            _context.Scores.AddRange(scores11);
+            _context.Scores.AddRange(scores12);
+            _context.Scores.AddRange(scores13);
+            _context.Scores.AddRange(scores14);
+            _context.Scores.AddRange(scores15);
+            _context.Scores.AddRange(scores16);
+            _context.Scores.AddRange(scores17);
+            _context.Scores.AddRange(scores18);
+            _context.Scores.AddRange(scores19);
+            _context.Scores.AddRange(scores20);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CleanAllData()
+        {
+            var scores = await _context.Scores.ToListAsync();
+            _context.Scores.RemoveRange(scores);
+            await _context.SaveChangesAsync();
+
+            var classes = await _context.Classes.ToListAsync();
+            _context.Classes.RemoveRange(classes);
+            await _context.SaveChangesAsync();
+
+            var subjects = await _context.Subjects.ToListAsync();
+            _context.Subjects.RemoveRange(subjects);
+            await _context.SaveChangesAsync();
+
+            var teachers = await _context.Teachers.ToListAsync();
+            _context.Teachers.RemoveRange(teachers);
+            await _context.SaveChangesAsync();
+
+            var students = await _context.Students.ToListAsync();
+            _context.Students.RemoveRange(students);
+            await _context.SaveChangesAsync();
         }
     }
 }
