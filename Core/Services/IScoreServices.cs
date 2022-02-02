@@ -11,5 +11,7 @@ namespace Core.Services
         Task<ScoreDto> NewAsync(CreateOrEditScoreDto model);
         Task<bool> EditAsync(int id, CreateOrEditScoreDto model);
         Task<bool> DeleteAsync(int id);
+        Task<BetterFiveStudensDto> GetBetterFiveStudens(string subject);
+        Task<BetterTenStudensDto> GetBetterTenStudens(int teacherId);
     }
 }

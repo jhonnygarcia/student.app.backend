@@ -30,7 +30,8 @@ namespace WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedListDto<SubjectDto>>> GetFiltered(string search = null, int? page = null, int? perPage = null)
+        [SwaggerResponse(HttpStatusCode.OK, typeof(PagedListResDto<SubjectResDto>))]
+        public async Task<ActionResult<PagedListResDto<SubjectResDto>>> GetFiltered(string search = null, int? page = null, int? perPage = null)
         {
             var result = await _subjectServices.GetFilteredAsync(new PagedQueryDto
             {
@@ -38,7 +39,11 @@ namespace WebApplication.Controllers
                 PerPage = perPage,
                 Page = page
             });
-            return Ok(result);
+            return Ok(new PagedListResDto<SubjectResDto>
+            {
+                Data = _mapper.Map<SubjectResDto[]>(result.Data),
+                TotalElements = result.TotalElements
+            });
         }
         [HttpGet]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponse))]

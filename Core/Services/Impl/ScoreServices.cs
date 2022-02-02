@@ -12,6 +12,7 @@ namespace Core.Services.Impl
 {
     public class ScoreServices : IScoreServices
     {
+        private const int SCORES_COUNT = 4;
         private readonly StudentContext _context;
         private readonly IMapper _mapper;
         public ScoreServices(StudentContext context, IMapper mapper)
@@ -54,9 +55,14 @@ namespace Core.Services.Impl
                 throw new BadRequestException($"{model.Description} is required");
             }
 
-            if (model.Qualification is null or < 0)
+            if (model.Qualification is null)
             {
-                throw new BadRequestException($"the {nameof(model.Qualification)} must be greater than zero and is required");
+                throw new BadRequestException($"the {nameof(model.Qualification)} is required");
+            }
+
+            if (model.Qualification.Value < 0 || model.Qualification > 100)
+            {
+                throw new BadRequestException("The score must be between 0 and 100");
             }
 
             if (!model.StudentId.HasValue)
@@ -91,6 +97,15 @@ namespace Core.Services.Impl
             {
                 throw new BadRequestException($"{nameof(model.TeacherId)} is invalid, " +
                                               "dont's exists none Teacher");
+            }
+
+            var countScoresByStudent = await _context.Scores
+                .Where(s => s.Student.Id == student.Id && s.Subject.Id == subject.Id).CountAsync();
+
+            if (countScoresByStudent == SCORES_COUNT)
+            {
+                throw new ValidationException("The 4 qualifications of this same subject and " +
+                                              "semester have already been registered for this same student");
             }
 
             var score = new Score
@@ -130,14 +145,14 @@ namespace Core.Services.Impl
 
             if (model.Qualification.HasValue)
             {
-                if (model.Qualification.Value < 0)
+                if (model.Qualification.Value < 0 || model.Qualification > 100)
                 {
-                    throw new BadRequestException($"the {nameof(model.Qualification)} " +
-                                                  $"must be greater than zero");
+                    throw new BadRequestException($"The score must be between 0 and 100");
                 }
+
                 score.Qualification = model.Qualification.Value;
             }
-            
+
             if (model.SubjectId.HasValue)
             {
                 var newSubject = await _context.Subjects.FindAsync(model.SubjectId);
@@ -188,5 +203,137 @@ namespace Core.Services.Impl
             return true;
         }
 
+        public async Task<BetterFiveStudensDto> GetBetterFiveStudens(string subjectName)
+        {
+            var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.Name == subjectName);
+            if (subject == null)
+            {
+                throw new NotFoundException(nameof(Subject), subjectName);
+            }
+
+            var query = _context.Scores.Where(s => s.Subject.Name == subjectName);
+
+
+            var plainData = await query.Select(p => new
+            {
+                p.Subject.Semester,
+                StudentId = p.Student.Id,
+                StudentName = p.Student.Name,
+                StudentLastName = p.Student.LastName,
+                p.Qualification
+            }).ToListAsync();
+
+            var group = plainData.GroupBy(s => s.Semester).Select(g => new
+            {
+                Semester = g.Key,
+                Scores = g.Select(s => new
+                {
+                    Student = new
+                    {
+                        Id = s.StudentId,
+                        Name = s.StudentName,
+                        LastName = s.StudentLastName
+                    },
+                    s.Qualification
+                })
+            }).ToList();
+
+            var result = new BetterFiveStudensDto
+            {
+                SubjectId = subject.Id,
+                SubjectName = subject.Name,
+                Semesters = group.Select(res => new SemesterBetterFive
+                {
+                    Semester = res.Semester,
+                    Students = res.Scores.GroupBy(score => score.Student.Id).Select(scoreGroup =>
+                    {
+                        var first = scoreGroup.First().Student;
+                        return new QualificationBetterFive
+                        {
+                            Id = first.Id,
+                            Name = first.Name,
+                            LastName = first.LastName,
+                            Score = scoreGroup.Sum(e => e.Qualification) / SCORES_COUNT
+                        };
+                    }).OrderByDescending(s => s.Score).Take(5).ToArray()
+                }).ToArray()
+            };
+
+            return result;
+        }
+        public async Task<BetterTenStudensDto> GetBetterTenStudens(int teacherId)
+        {
+            var teacher = await _context.Teachers.FindAsync(teacherId);
+            if (teacher == null)
+            {
+                throw new NotFoundException(nameof(Teacher), teacherId);
+            }
+
+            var query = _context.Scores.Where(s => s.Teacher.Id == teacherId);
+
+            var plainData = await query.Select(p => new
+            {
+                SubjectId = p.Subject.Id,
+                SubjectName = p.Subject.Name,
+                SubjectSemester = p.Subject.Semester,
+
+                StudentId = p.Student.Id,
+                StudentName = p.Student.Name,
+                StudentLastName = p.Student.LastName,
+                p.Qualification
+            }).ToListAsync();
+
+            var group = plainData.GroupBy(s => s.SubjectName).Select(g => new
+            {
+                SubjectName = g.Key,
+                Scores = g.Select(s => new
+                {
+                    Semester = s.SubjectSemester,
+                    Student = new
+                    {
+                        Id = s.StudentId,
+                        Name = s.StudentName,
+                        LastName = s.StudentLastName
+                    },
+                    s.Qualification
+                })
+            }).ToList();
+
+            var result = new BetterTenStudensDto
+            {
+                TeacherId = teacher.Id,
+                TeacherName = teacher.Name + " " + teacher.LastName,
+                Subjects = group.Select(res => new SubjectBetterTenDto
+                {
+                    SubjectName = res.SubjectName,
+                    Semesters = res.Scores.GroupBy(score => score.Semester).Select(scoreGroup =>
+                    {
+                        var semester = scoreGroup.First().Semester;
+                        return new SemesterBetterTenDto
+                        {
+                            Semester = semester,
+                            Students = scoreGroup
+                                .GroupBy(g => g.Student.Id)
+                                .Select(s =>
+                                {
+                                    var firstStudent = s.First();
+                                    return new QualificationBetterTen
+                                    {
+                                        Id = firstStudent.Student.Id,
+                                        Name = firstStudent.Student.Name,
+                                        LastName = firstStudent.Student.LastName,
+                                        Score = s.Sum(e => e.Qualification) / SCORES_COUNT
+                                    };
+                                })
+                                .OrderByDescending(o => o.Score)
+                                .Take(10)
+                                .ToArray()
+                        };
+                    }).ToArray()
+                }).ToArray()
+            };
+
+            return result;
+        }
     }
 }

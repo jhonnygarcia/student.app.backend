@@ -31,7 +31,8 @@ namespace WebApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedListDto<ClassDto>>> GetFiltered(string search = null,
+        [SwaggerResponse(HttpStatusCode.OK, typeof(PagedListResDto<ClassResDto>))]
+        public async Task<ActionResult<PagedListResDto<ClassResDto>>> GetFiltered(string search = null,
             string studentName = null, string subjectName = null,
             string teacherName = null, int? page = null,
             int? perPage = null)
@@ -46,7 +47,11 @@ namespace WebApplication.Controllers
                 SubjectName = subjectName,
                 StudentName = studentName
             });
-            return Ok(result);
+            return Ok(new PagedListResDto<ClassResDto>
+            {
+                Data = _mapper.Map<ClassResDto[]>(result.Data),
+                TotalElements = result.TotalElements
+            });
         }
 
         [HttpGet]
@@ -68,6 +73,7 @@ namespace WebApplication.Controllers
             var res = _mapper.Map<StudentResDto[]>(students);
             return Ok(res);
         }
+
         [HttpPost]
         [Route("{id}/students")]
         public async Task<ActionResult> GetStudents(int id, [FromBody] int[] studentIds)
@@ -88,6 +94,7 @@ namespace WebApplication.Controllers
             var res = _mapper.Map<ClassResDto>(result);
             return CreatedAtAction("Get", new { id = res.Id }, res);
         }
+
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponse))]
         [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ErrorResponse))]
@@ -98,6 +105,7 @@ namespace WebApplication.Controllers
             await _classServices.EditAsync(id, param);
             return Ok();
         }
+
         [HttpDelete]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ErrorResponse))]
         [SwaggerResponse(HttpStatusCode.Conflict, typeof(ErrorResponse))]

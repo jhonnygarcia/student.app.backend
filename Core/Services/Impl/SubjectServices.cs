@@ -72,6 +72,16 @@ namespace Core.Services.Impl
                                               "dont's exists none Teacher");
             }
 
+
+            var existsSubjectAndSemester = await _context.Subjects.AnyAsync(s =>
+                s.Name == model.Name && s.Semester == model.Semester);
+
+            if (existsSubjectAndSemester)
+            {
+                throw new ValidationException("A subject with the same " +
+                                              "semester is already registered");
+            }
+
             var subject = new Subject
             {
                 Name = model.Name,
@@ -103,6 +113,9 @@ namespace Core.Services.Impl
                 throw new NotFoundException(nameof(Class), id);
             }
 
+            var name = !string.IsNullOrWhiteSpace(model.Name) ? model.Name : subject.Name;
+            var semester = !string.IsNullOrWhiteSpace(model.Semester) ? model.Semester : subject.Semester;
+
             if (!string.IsNullOrWhiteSpace(model.Name))
                 subject.Name = model.Name;
 
@@ -120,6 +133,16 @@ namespace Core.Services.Impl
                     throw new BadRequestException($"{nameof(model.TeacherId)} is invalid, don't exist");
                 }
                 subject.Teacher = newTeacher;
+            }
+
+
+            var existsSubjectAndSemester = await _context.Subjects.AnyAsync(s =>
+                s.Id != subject.Id && s.Name == name && s.Semester == semester);
+
+            if (existsSubjectAndSemester)
+            {
+                throw new ValidationException("A subject with the same " +
+                                              "semester is already registered");
             }
 
             await _context.SaveChangesAsync();
